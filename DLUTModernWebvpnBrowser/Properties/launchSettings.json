@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DLUTModernWebvpnBrowser (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "DLUTModernWebvpnBrowser (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
