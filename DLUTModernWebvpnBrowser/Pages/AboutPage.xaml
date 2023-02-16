@@ -27,8 +27,8 @@
                 <PersonPicture ProfilePicture="ms-appx:///Assets/Author.png" DisplayName="IShirai_KurokoI" HorizontalAlignment="Left"/>
                 <StackPanel Margin="10,0,0,0">
                     <TextBlock Text="IShirai_KurokoI" FontSize="18" FontWeight="Bold" Margin="5,0,0,0"/>
-                    <HyperlinkButton Content="Github主页" NavigateUri="https://github.com/IShiraiKurokoI" />
-                    <HyperlinkButton Content="BiliBili主页" NavigateUri="https://space.bilibili.com/310144483" />
+                    <HyperlinkButton Content="Github主页" Click="HyperlinkButton_Click_1"/>
+                    <HyperlinkButton Content="BiliBili主页" Click="HyperlinkButton_Click_2"/>
                 </StackPanel>
             </StackPanel>
 

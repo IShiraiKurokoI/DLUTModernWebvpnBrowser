@@ -39,6 +39,8 @@ namespace DLUTModernWebvpnBrowser
             m_AppWindow = WindowHelper.GetAppWindowForCurrentWindow(this);
             m_AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             m_AppWindow.Resize(new SizeInt32(1600, 900));
+            m_AppWindow.SetIcon("Assets/logo.ico");
+            this.Title = "大连理工大学WebVPN浏览器";
             SetTitleBar(AppTitleBar);
         }
     }

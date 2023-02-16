@@ -79,5 +79,15 @@ namespace DLUTModernWebvpnBrowser.Pages
         {
             tabviewPage.OpenCustom("项目地址", "https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser");
         }
+
+        private void HyperlinkButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            tabviewPage.OpenCustom("Github主页", "https://github.com/IShiraiKurokoI");
+        }
+
+        private void HyperlinkButton_Click_2(object sender, RoutedEventArgs e)
+        {
+            tabviewPage.OpenCustom("BiliBili主页", "https://space.bilibili.com/310144483");
+        }
     }
 }

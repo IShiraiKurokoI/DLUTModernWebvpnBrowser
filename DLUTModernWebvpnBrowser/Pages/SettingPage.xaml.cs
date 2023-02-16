@@ -91,12 +91,33 @@ namespace DLUTModernWebvpnBrowser.Pages
             ApplicationConfig.SaveSettings("Password", Password.Password);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var builder = new AppNotificationBuilder()
-                .AddText("⚠抱歉，暂未实现！⚠");
-            var notificationManager = AppNotificationManager.Default;
-            notificationManager.Show(builder.BuildNotification());
+            ContentDialog dialog = new ContentDialog();
+
+            // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = "确认清除所有Cookie吗？";
+            dialog.PrimaryButtonText = "确定";
+            dialog.CloseButtonText = "取消";
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            dialog.Content = "你所有打开的网页状态都会丢失！";
+
+            var result = await dialog.ShowAsync();
+            if(result==ContentDialogResult.Primary)
+            {
+                WebView2 webView2 = new WebView2();
+                webView2.CoreWebView2Initialized += (sender, args) =>
+                {
+                    webView2.CoreWebView2.CookieManager.DeleteAllCookies();
+                    var builder = new AppNotificationBuilder()
+                        .AddText("清除成功！");
+                    var notificationManager = AppNotificationManager.Default;
+                    notificationManager.Show(builder.BuildNotification());
+                };
+                webView2.EnsureCoreWebView2Async();
+            }
         }
     }
 }
