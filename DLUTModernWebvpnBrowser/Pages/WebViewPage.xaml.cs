@@ -273,5 +273,10 @@ namespace DLUTModernWebvpnBrowser.Pages
         {
             tabviewPage.OpenCustom("历史记录", "edge://history/all");
         }
+
+        private void GoForward_Click(object sender, RoutedEventArgs e)
+        {
+            WebView.GoForward();
+        }
     }
 }

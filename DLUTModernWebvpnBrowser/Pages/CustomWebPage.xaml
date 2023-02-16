@@ -20,6 +20,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="32"/>
                 <ColumnDefinition Width="32"/>
+                <ColumnDefinition Width="32"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="32"/>
             </Grid.ColumnDefinitions>
@@ -28,13 +29,18 @@
                     <FontIcon Glyph="&#xe72b;" VerticalAlignment="Top"/>
                 </AppBarButton.Icon>
             </AppBarButton>
-            <AppBarButton  Height="48" Width="32" Grid.Column="1" Margin="4,0,0,0" x:Name="RefreshOrStop" Click="RefreshOrStop_Click">
+            <AppBarButton Height="48" Width="32" Grid.Column="1" Margin="4,0,0,0" x:Name="GoForward" Click="GoForward_Click" IsEnabled="{x:Bind WebView.CanGoForward,Mode=TwoWay}">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xe72a;" VerticalAlignment="Top"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton  Height="48" Width="32" Grid.Column="2" Margin="4,0,0,0" x:Name="RefreshOrStop" Click="RefreshOrStop_Click">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xe72c;" x:Name="RefreshOrStopIcon"/>
                 </AppBarButton.Icon>
             </AppBarButton>
-            <TextBox HorizontalAlignment="Stretch" Height="26" Grid.Column="2" Margin="8,0,0,0" x:Name="AddressBox" Text="{x:Bind WebView.Source.AbsoluteUri,Mode=OneWay}"/>
-            <AppBarButton  Height="48" Width="32" Grid.Column="3" Margin="4,0,0,0" x:Name="More">
+            <TextBox HorizontalAlignment="Stretch" Height="26" Grid.Column="3" Margin="8,0,0,0" x:Name="AddressBox" Text="{x:Bind WebView.Source.AbsoluteUri,Mode=OneWay}"/>
+            <AppBarButton  Height="48" Width="32" Grid.Column="4" Margin="4,0,0,0" x:Name="More">
                 <AppBarButton.Icon>
                     <FontIcon  Glyph="&#xe712;"/>
                 </AppBarButton.Icon>
