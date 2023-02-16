@@ -77,7 +77,7 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         private void SettingsCard_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            Windows.System.Launcher.LaunchUriAsync(new System.Uri("https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser"));
+            tabviewPage.OpenCustom("ÏîÄ¿µØÖ·", "https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser");
         }
     }
 }
