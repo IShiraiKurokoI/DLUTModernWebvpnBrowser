@@ -61,6 +61,14 @@
                                 <KeyboardAccelerator Key="J" Modifiers="Control"/>
                             </MenuFlyoutItem.KeyboardAccelerators>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="历史记录" Click="MenuFlyoutItem_Click_6">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xe81c;"/>
+                            </MenuFlyoutItem.Icon>
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="H" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
                         <MenuFlyoutItem Text="共享" Click="MenuFlyoutItem_Click_5">
                             <MenuFlyoutItem.Icon>

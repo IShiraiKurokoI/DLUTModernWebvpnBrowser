@@ -38,6 +38,7 @@ namespace DLUTModernWebvpnBrowser
             this.InitializeComponent();
             m_AppWindow = WindowHelper.GetAppWindowForCurrentWindow(this);
             m_AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+            m_AppWindow.Resize(new SizeInt32(1600, 900));
             SetTitleBar(AppTitleBar);
         }
     }

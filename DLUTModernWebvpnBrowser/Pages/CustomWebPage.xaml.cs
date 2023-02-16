@@ -80,7 +80,7 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         private void MenuFlyoutItem_Click_3(object sender, RoutedEventArgs e)
         {
-            tabviewPage.OpenCustom("反馈", "");
+            tabviewPage.OpenCustom("反馈", "https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser/issues");
         }
 
         private void MenuFlyoutItem_Click_4(object sender, RoutedEventArgs e)
@@ -134,6 +134,11 @@ namespace DLUTModernWebvpnBrowser.Pages
                 RefreshOrStopIcon.Glyph = "\xe72c";
                 tabViewItem.Header = WebView.CoreWebView2.DocumentTitle;
             };
+        }
+
+        private void MenuFlyoutItem_Click_6(object sender, RoutedEventArgs e)
+        {
+            tabviewPage.OpenCustom("历史记录", "edge://history/all");
         }
     }
 }

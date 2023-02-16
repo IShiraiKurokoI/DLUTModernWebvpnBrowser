@@ -1,4 +1,4 @@
-<!-- Copyright (c) Microsoft Corporation and Contributors. -->
+ï»¿<!-- Copyright (c) Microsoft Corporation and Contributors. -->
 <!-- Licensed under the MIT License. -->
 
 <Page
@@ -43,7 +43,7 @@
                 </AppBarButton.Resources>
                 <AppBarButton.Flyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="´ò¿ªÐÂ±êÇ©Ò³" Click="MenuFlyoutItem_Click">
+                        <MenuFlyoutItem Text="æ‰“å¼€æ–°æ ‡ç­¾é¡µ" Click="MenuFlyoutItem_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xe78b;"/>
                             </MenuFlyoutItem.Icon>
@@ -52,7 +52,7 @@
                             </MenuFlyoutItem.KeyboardAccelerators>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="ÏÂÔØ" Click="MenuFlyoutItem_Click_4">
+                        <MenuFlyoutItem Text="ä¸‹è½½" Click="MenuFlyoutItem_Click_4">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xe896;"/>
                             </MenuFlyoutItem.Icon>
@@ -60,21 +60,29 @@
                                 <KeyboardAccelerator Key="J" Modifiers="Control"/>
                             </MenuFlyoutItem.KeyboardAccelerators>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="åŽ†å²è®°å½•" Click="MenuFlyoutItem_Click_6">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xe81c;"/>
+                            </MenuFlyoutItem.Icon>
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="H" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="¹²Ïí" Click="MenuFlyoutItem_Click_5">
+                        <MenuFlyoutItem Text="å…±äº«" Click="MenuFlyoutItem_Click_5">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xe72d;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="ÉèÖÃ" Icon="Setting" Click="MenuFlyoutItem_Click_1">
+                        <MenuFlyoutItem Text="è®¾ç½®" Icon="Setting" Click="MenuFlyoutItem_Click_1">
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="¹ØÓÚ" Click="MenuFlyoutItem_Click_2">
+                        <MenuFlyoutItem Text="å…³äºŽ" Click="MenuFlyoutItem_Click_2">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xe946;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="·´À¡" Click="MenuFlyoutItem_Click_3">
+                        <MenuFlyoutItem Text="åé¦ˆ" Click="MenuFlyoutItem_Click_3">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xed15;"/>
                             </MenuFlyoutItem.Icon>

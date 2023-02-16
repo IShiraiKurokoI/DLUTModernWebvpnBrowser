@@ -18,6 +18,8 @@ using Microsoft.UI.Xaml.Navigation;
 using DLUTModernWebvpnBrowser.Entities;
 using Microsoft.UI.Xaml.Media.Animation;
 using Windows.Foundation.Metadata;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.DataTransfer;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,6 +31,11 @@ namespace DLUTModernWebvpnBrowser.Pages
     /// </summary>
     public sealed partial class AboutPage : Page
     {
+        public string Version = string.Format("°æ±¾£º{0}.{1}.{2}.{3}",
+                        Package.Current.Id.Version.Major,
+                        Package.Current.Id.Version.Minor,
+                        Package.Current.Id.Version.Build,
+                        Package.Current.Id.Version.Revision);
         private TabViewItem tabViewItem;
         private TabviewPage tabviewPage;
         public AboutPage()
@@ -57,6 +64,20 @@ namespace DLUTModernWebvpnBrowser.Pages
             {
                 anim.TryStart(SourceElement);
             }
+        }
+
+        private void HyperlinkButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            DataPackage dataPackage = new DataPackage();
+            dataPackage.RequestedOperation = DataPackageOperation.Copy;
+            dataPackage.SetText("https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser");
+            Clipboard.SetContent(dataPackage);
+            CopyTip.IsOpen = true;
+        }
+
+        private void SettingsCard_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            Windows.System.Launcher.LaunchUriAsync(new System.Uri("https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser"));
         }
     }
 }

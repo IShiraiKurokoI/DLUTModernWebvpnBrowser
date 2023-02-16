@@ -65,7 +65,7 @@ namespace DLUTModernWebvpnBrowser
         {
             TabViewItem newItem = new TabViewItem();
             newItem.Header = "¹ØÓÚ";
-            newItem.IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.ContactInfo };
+            newItem.IconSource = new Microsoft.UI.Xaml.Controls.FontIconSource() { Glyph = "\xe946" };
             Frame frame = new Frame();
             frame.Navigate(typeof(AboutPage), new TabViewAndItem(this, newItem));
             newItem.Content = frame;
@@ -77,7 +77,6 @@ namespace DLUTModernWebvpnBrowser
         {
             TabViewItem newItem = new TabViewItem();
             newItem.Header = Title;
-            newItem.IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.ContactInfo };
             Frame frame = new Frame();
             frame.Navigate(typeof(CustomWebPage), new Everything(this, newItem,url));
             newItem.Content = frame;

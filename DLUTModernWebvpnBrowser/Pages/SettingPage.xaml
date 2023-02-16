@@ -17,7 +17,7 @@
         <converters:VisibilityBoolenConverter x:Key="VisibilityBoolenConverter"/>
     </Page.Resources>
 
-    <StackPanel x:Name="SourceElement" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Loaded="SourceElement_Loaded">
+    <StackPanel x:Name="SourceElement" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Loaded="SourceElement_Loaded" Margin="24,16,24,24">
         <controls:SettingsGroup Header="统一认证信息" Margin="4,-24,4,4">
             <labs:SettingsCard
                     Header="学工号">

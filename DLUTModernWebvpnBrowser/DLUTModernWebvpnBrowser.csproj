@@ -24,6 +24,7 @@
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Assets\Author.png" />
     <None Remove="Assets\logo.png" />
     <None Remove="Pages\AboutPage.xaml" />
     <None Remove="Pages\CustomWebPage.xaml" />
