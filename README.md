@@ -1,1 +1,2 @@
 # DLUTModernWebvpnBrowser
+方便同学校外访问校内的通知等校园门户找不到的界面
