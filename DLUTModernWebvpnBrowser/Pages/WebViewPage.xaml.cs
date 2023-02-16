@@ -19,6 +19,7 @@ using Microsoft.Windows.AppNotifications;
 using Castle.Core.Internal;
 using System.Diagnostics;
 using WinUICommunity.Common.Extensions;
+using Windows.ApplicationModel.DataTransfer;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -264,8 +265,12 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         private void MenuFlyoutItem_Click_5(object sender, RoutedEventArgs e)
         {
+            DataPackage dataPackage = new DataPackage();
+            dataPackage.RequestedOperation = DataPackageOperation.Copy;
+            dataPackage.SetText("【"+WebView.CoreWebView2.DocumentTitle+"】"+WebView.Source.AbsoluteUri);
+            Clipboard.SetContent(dataPackage);
             var builder = new AppNotificationBuilder()
-                .AddText("⚠抱歉，暂未实现！⚠");
+                .AddText("页面链接已复制到剪贴板");
             var notificationManager = AppNotificationManager.Default;
             notificationManager.Show(builder.BuildNotification());
         }

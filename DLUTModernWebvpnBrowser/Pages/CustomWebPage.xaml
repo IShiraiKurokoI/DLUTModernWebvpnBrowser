@@ -75,10 +75,13 @@
                             </MenuFlyoutItem.KeyboardAccelerators>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="共享" Click="MenuFlyoutItem_Click_5">
+                        <MenuFlyoutItem Text="分享页面链接" Click="MenuFlyoutItem_Click_5">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xe72d;"/>
                             </MenuFlyoutItem.Icon>
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
                         <MenuFlyoutItem Text="设置" Icon="Setting" Click="MenuFlyoutItem_Click_1">
