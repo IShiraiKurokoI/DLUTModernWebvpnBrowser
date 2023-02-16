@@ -47,6 +47,7 @@ namespace DLUTModernWebvpnBrowser
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--proxy-server=\"direct://\"");
             m_window = new MainWindow();
             if (ApplicationConfig.GetSettings("Theme") != null)
             {
