@@ -16,7 +16,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using WinUICommunity.Common.Helpers;
+using WinUICommunity;
 using DLUTModernWebvpnBrowser.Helpers;
 using Microsoft.UI;
 using Windows.Graphics;
@@ -36,7 +36,7 @@ namespace DLUTModernWebvpnBrowser
         public MainWindow()
         {
             this.InitializeComponent();
-            m_AppWindow = WindowHelper.GetAppWindowForCurrentWindow(this);
+            m_AppWindow = this.AppWindow;
             m_AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             m_AppWindow.Resize(new SizeInt32(1600, 900));
             m_AppWindow.SetIcon("Assets/logo.ico");

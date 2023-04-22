@@ -55,6 +55,7 @@ namespace DLUTModernWebvpnBrowser.Pages
             tabViewItem = everything._item;
             tabviewPage = everything._tabview;
             WebView.Source = new Uri(everything.url);
+            AddressBox.Text = everything.url;
             base.OnNavigatedTo(e);
 
             var anim = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackwardConnectedAnimation");

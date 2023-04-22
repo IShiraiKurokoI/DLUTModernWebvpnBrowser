@@ -18,7 +18,7 @@ using Microsoft.UI.Xaml.Navigation;
 using DLUTModernWebvpnBrowser.Entities;
 using Microsoft.UI.Xaml.Media.Animation;
 using Windows.Foundation.Metadata;
-using WinUICommunity.Common.Helpers;
+using WinUICommunity;
 using DLUTModernWebvpnBrowser.Configurations;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Windows.AppNotifications.Builder;
@@ -66,7 +66,7 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         private void SourceElement_Loaded(object sender, RoutedEventArgs e)
         {
-            ThemeHelper.SetComboBoxDefaultItem(ThemePanel);
+            App.themeManager.SetThemeComboBoxDefaultItem(ThemePanel);
             Uid.Text = ApplicationConfig.GetSettings("Uid");
             Password.Password = ApplicationConfig.GetSettings("Password");
         }
@@ -74,7 +74,7 @@ namespace DLUTModernWebvpnBrowser.Pages
         private void ThemePanel_SelectionChanged(object sender, RoutedEventArgs e)
         {
             ApplicationConfig.SaveSettings("Theme", ((ComboBoxItem)ThemePanel.SelectedItem).Tag.ToString());
-            ThemeHelper.ComboBoxSelectionChanged(sender);
+            App.themeManager.OnThemeComboBoxSelectionChanged(sender);
         }
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {

@@ -18,8 +18,13 @@ using Microsoft.Windows.AppNotifications.Builder;
 using Microsoft.Windows.AppNotifications;
 using Castle.Core.Internal;
 using System.Diagnostics;
-using WinUICommunity.Common.Extensions;
+using WinUICommunity;
 using Windows.ApplicationModel.DataTransfer;
+using System.Net.Http;
+using System.Net;
+using System.Threading;
+using DLUTModernWebvpnBrowser.Helpers;
+using DES = DLUTModernWebvpnBrowser.Helpers.DES;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -124,7 +129,7 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         async Task login()
         {
-            if(ApplicationConfig.GetSettings("Uid") .IsNullOrEmpty()|| ApplicationConfig.GetSettings("Password").IsNullOrEmpty())
+            if(string.IsNullOrEmpty(ApplicationConfig.GetSettings("Uid")) || string.IsNullOrEmpty(ApplicationConfig.GetSettings("Password")))
             {
                 var builder = new AppNotificationBuilder()
                     .AddText("⚠请先配置账号密码⚠")
@@ -135,6 +140,55 @@ namespace DLUTModernWebvpnBrowser.Pages
             }
             else
             {
+                Task.Run(() =>
+                {
+                    if (WebvpnKey.Key == null)
+                    {
+                        string LoginURL = "https://sso.dlut.edu.cn/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue";
+                        var cookieContainer = new CookieContainer();
+                        using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer, AllowAutoRedirect = true, UseProxy = false })
+                        using (HttpClient client = new HttpClient(handler))
+                        {
+                            try
+                            {
+                                client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.44");
+                                client.Timeout = new TimeSpan(0, 0, 10); // 10是秒数，用于设置超时时长
+                                Task<HttpResponseMessage> res = client.GetAsync(LoginURL);
+                                string Response = res.Result.Content.ReadAsStringAsync().Result;
+                                string JSESSIONIDCAS = res.Result.Headers.ToString().Split("JSESSIONIDCAS=")[1].Split("; path=")[0];
+                                string LT = Response.Split("<input type=\"hidden\" id=\"lt\" name=\"lt\" value=\"", StringSplitOptions.None)[1].Split("\"")[0];
+                                string execution = Response.Split("<input type=\"hidden\" name=\"execution\" value=\"", StringSplitOptions.None)[1].Split("\"")[0];
+                                string RSA = DES.GetRSA(ApplicationConfig.GetSettings("Uid"), ApplicationConfig.GetSettings("Password"), LT);
+                                HttpContent content = new StringContent("none=on&rsa=" + RSA + "&ul=" + ApplicationConfig.GetSettings("Uid").Length + "&pl=" + ApplicationConfig.GetSettings("Password").Length + "&sl=0&lt=" + LT + "&execution=" + execution + "&_eventId=submit");
+                                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                                cookieContainer.Add(new Uri("https://sso.dlut.edu.cn"), new Cookie("cas_hash", ""));
+                                cookieContainer.Add(new Uri("https://sso.dlut.edu.cn"), new Cookie("dlut_cas_un", ApplicationConfig.GetSettings("Uid")));
+                                cookieContainer.Add(new Uri("https://sso.dlut.edu.cn"), new Cookie("Language", "zh_CN"));
+                                cookieContainer.Add(new Uri("https://sso.dlut.edu.cn"), new Cookie("JSESSIONIDCAS", JSESSIONIDCAS));
+                                Task<HttpResponseMessage> res1 = client.PostAsync(LoginURL, content);
+                                HttpResponseMessage Response1 = res1.Result;
+                                Task<HttpResponseMessage> res2 = client.GetAsync("https://webvpn.dlut.edu.cn/user/info");
+                                HttpResponseMessage Response2 = res2.Result;
+                                String FinalResponse = Response2.Content.ReadAsStringAsync().Result;
+                                Debug.WriteLine(FinalResponse);
+                                WebvpnKey.Key = FinalResponse.Split("\"wrdvpnKey\": \"")[1].Split("\"")[0];
+                                WebvpnKey.IV = FinalResponse.Split("\"wrdvpnIV\": \"")[1].Split("\"")[0];
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                                var builder = new AppNotificationBuilder()
+                                    .AddText(ex.ToString());
+                                var notificationManager = AppNotificationManager.Default;
+                                notificationManager.Show(builder.BuildNotification());
+                            }
+                            finally
+                            {
+                                client.Dispose();
+                            }
+                        }
+                    }
+                });
                 string jscode = "un.value='" + ApplicationConfig.GetSettings("Uid") + "'";
                 string jscode1 = "pd.value='" + ApplicationConfig.GetSettings("Password") + "'";
                 string rm = "rememberName.checked='checked'";
@@ -177,7 +231,7 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         string getCiphertext(string hosts)
         {
-            string ciphertext = AesEncrypt(hosts, "wrdvpnisthebest!", "wrdvpnisthebest!");
+            string ciphertext = AesEncrypt(hosts, WebvpnKey.Key, WebvpnKey.IV);
             string ciphertextTrunc = ciphertext.Substring(0, hosts.Length * 2);
             return ciphertextTrunc;
         }
@@ -211,6 +265,52 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         string getvpnurl(string url)
         {
+            if (WebvpnKey.Key == null)
+            {
+                string LoginURL = "https://sso.dlut.edu.cn/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue";
+                var cookieContainer = new CookieContainer();
+                using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer, AllowAutoRedirect = true, UseProxy = false })
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    try
+                    {
+                        client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.44");
+                        client.Timeout = new TimeSpan(0, 0, 10); // 10是秒数，用于设置超时时长
+                        Task<HttpResponseMessage> res = client.GetAsync(LoginURL);
+                        string Response = res.Result.Content.ReadAsStringAsync().Result;
+                        string JSESSIONIDCAS = res.Result.Headers.ToString().Split("JSESSIONIDCAS=")[1].Split("; path=")[0];
+                        string LT = Response.Split("<input type=\"hidden\" id=\"lt\" name=\"lt\" value=\"", StringSplitOptions.None)[1].Split("\"")[0];
+                        string execution = Response.Split("<input type=\"hidden\" name=\"execution\" value=\"", StringSplitOptions.None)[1].Split("\"")[0];
+                        string RSA = DES.GetRSA(ApplicationConfig.GetSettings("Uid"), ApplicationConfig.GetSettings("Password"), LT);
+                        HttpContent content = new StringContent("none=on&rsa=" + RSA + "&ul=" + ApplicationConfig.GetSettings("Uid").Length + "&pl=" + ApplicationConfig.GetSettings("Password").Length + "&sl=0&lt=" + LT + "&execution=" + execution + "&_eventId=submit");
+                        content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                        cookieContainer.Add(new Uri("https://sso.dlut.edu.cn"), new Cookie("cas_hash", ""));
+                        cookieContainer.Add(new Uri("https://sso.dlut.edu.cn"), new Cookie("dlut_cas_un", ApplicationConfig.GetSettings("Uid")));
+                        cookieContainer.Add(new Uri("https://sso.dlut.edu.cn"), new Cookie("Language", "zh_CN"));
+                        cookieContainer.Add(new Uri("https://sso.dlut.edu.cn"), new Cookie("JSESSIONIDCAS", JSESSIONIDCAS));
+                        Task<HttpResponseMessage> res1 = client.PostAsync(LoginURL, content);
+                        HttpResponseMessage Response1 = res1.Result;
+                        Task<HttpResponseMessage> res2 = client.GetAsync("https://webvpn.dlut.edu.cn/user/info");
+                        HttpResponseMessage Response2 = res2.Result;
+                        String FinalResponse = Response2.Content.ReadAsStringAsync().Result;
+                        Debug.WriteLine(FinalResponse);
+                        WebvpnKey.Key = FinalResponse.Split("\"wrdvpnKey\": \"")[1].Split("\"")[0];
+                        WebvpnKey.IV = FinalResponse.Split("\"wrdvpnIV\": \"")[1].Split("\"")[0];
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex);
+                        var builder = new AppNotificationBuilder()
+                            .AddText(ex.ToString());
+                        var notificationManager = AppNotificationManager.Default;
+                        notificationManager.Show(builder.BuildNotification());
+                    }
+                    finally
+                    {
+                        client.Dispose();
+                    }
+                }
+            }
             string[] parts = url.Split(new[] { "://" }, StringSplitOptions.None);
             string pro = "http";
             string add = "";
@@ -233,7 +333,7 @@ namespace DLUTModernWebvpnBrowser.Pages
             {
                 fold += ("/" + hosts[i]);
             }
-            string final = "https://" + "webvpn.dlut.edu.cn" + '/' + pro + '/' + "77726476706e69737468656265737421" + cph + fold;
+            string final = "https://" + "webvpn.dlut.edu.cn" + '/' + pro + '/' + Convert.ToHexString(Encoding.ASCII.GetBytes(WebvpnKey.IV)) + cph + fold;
             return final;
         }
 

@@ -8,8 +8,7 @@
     xmlns:local="using:DLUTModernWebvpnBrowser.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:WinUICommunity.SettingsUI.Controls"
-    xmlns:labs="using:WinUICommunity.SettingsUI.SettingsControls"
+    xmlns:controls="using:WinUICommunity"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -32,52 +31,43 @@
                 </StackPanel>
             </StackPanel>
 
-            <controls:Setting 
+            <controls:SettingsCard 
                     Header="点此复制项目链接分享给好友"
-                    Icon="&#xe72d;"
                     Margin="0,20,0,0">
-                <controls:Setting.ActionContent>
-                    <Button 
+                <controls:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xe72d;" />
+                </controls:SettingsCard.HeaderIcon>
+                <Button 
                         x:Name="CopyLink"
                         HorizontalAlignment="Right"
                         Content="复制链接" 
                         Click="HyperlinkButton_Click"/>
-                </controls:Setting.ActionContent>
-            </controls:Setting>
+            </controls:SettingsCard>
 
-            <labs:SettingsCard ActionIconToolTip="打开项目页面"
+            <controls:SettingsCard ActionIconToolTip="打开项目页面"
                                Description="你可以点此打开本浏览器项目页面"
                                Header="项目页面"
                                IsClickEnabled="True"
                                Click="SettingsCard_Click"
                                        MaxWidth="2000">
-                <labs:SettingsCard.HeaderIcon>
+                <controls:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE12B;" />
-                </labs:SettingsCard.HeaderIcon>
-                <labs:SettingsCard.ActionIcon>
+                </controls:SettingsCard.HeaderIcon>
+                <controls:SettingsCard.ActionIcon>
                     <FontIcon FontSize="12"
                               Glyph="&#xE8A7;" />
-                </labs:SettingsCard.ActionIcon>
-            </labs:SettingsCard>
+                </controls:SettingsCard.ActionIcon>
+            </controls:SettingsCard>
 
-            <TeachingTip x:Name="CopyTip"
-                Target="{x:Bind CopyLink}"
-                Title="复制成功！"
-                Subtitle="快将Github链接分享给好友吧">
-                <TeachingTip.IconSource>
-                    <SymbolIconSource Symbol="Accept" />
-                </TeachingTip.IconSource>
-            </TeachingTip>
-
-            <labs:SettingsExpander Header="感谢以下本应用中使用的开源项目"
+            <controls:SettingsExpander Header="感谢以下本应用中使用的开源项目"
                                        MaxWidth="2000">
-                <labs:SettingsExpander.HeaderIcon>
+                <controls:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xe734;" />
-                </labs:SettingsExpander.HeaderIcon>
-                <labs:SettingsExpander.Items>
-                    <labs:SettingsCard
+                </controls:SettingsExpander.HeaderIcon>
+                <controls:SettingsExpander.Items>
+                    <controls:SettingsCard
                                        MaxWidth="2000">
-                        <labs:SettingsCard.Description>
+                        <controls:SettingsCard.Description>
                             <ScrollViewer>
                                 <StackPanel>
                                     <HyperlinkButton Content="Microsoft.Windows.SDK.BuildTools" NavigateUri="https://aka.ms/WinSDKProjectURL" Margin="5" FontSize="18"/>
@@ -86,10 +76,10 @@
                                     <HyperlinkButton Content="WinUICommunity/SettingsUI" NavigateUri="https://github.com/WinUICommunity/SettingsUI"  Margin="5" FontSize="18"/>
                                 </StackPanel>
                             </ScrollViewer>
-                        </labs:SettingsCard.Description>
-                    </labs:SettingsCard>
-                </labs:SettingsExpander.Items>
-            </labs:SettingsExpander>
+                        </controls:SettingsCard.Description>
+                    </controls:SettingsCard>
+                </controls:SettingsExpander.Items>
+            </controls:SettingsExpander>
         </StackPanel>
     </Grid>
 </Page>

@@ -20,6 +20,8 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Windows.Foundation.Metadata;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
+using Microsoft.Windows.AppNotifications.Builder;
+using Microsoft.Windows.AppNotifications;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -72,7 +74,10 @@ namespace DLUTModernWebvpnBrowser.Pages
             dataPackage.RequestedOperation = DataPackageOperation.Copy;
             dataPackage.SetText("https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser");
             Clipboard.SetContent(dataPackage);
-            CopyTip.IsOpen = true;
+            var builder = new AppNotificationBuilder()
+                .AddText("¸´ÖÆ³É¹¦£¡");
+            var notificationManager = AppNotificationManager.Default;
+            notificationManager.Show(builder.BuildNotification());
         }
 
         private void SettingsCard_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
