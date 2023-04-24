@@ -68,7 +68,6 @@ namespace DLUTModernWebvpnBrowser
             {
                 ApplicationConfig.SaveSettings("Theme", "Default");
             }
-
             themeManager = ThemeManager.Initialize(m_window, new ThemeOptions
             {
                 BackdropType = BackdropType.DesktopAcrylic,
