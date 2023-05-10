@@ -74,6 +74,7 @@
                                     <HyperlinkButton Content="Microsoft/WindowsAppSDK" NavigateUri="https://github.com/microsoft/windowsappsdk"  Margin="5" FontSize="18"/>
                                     <HyperlinkButton Content="WinUICommunity/Common" NavigateUri="https://github.com/WinUICommunity/Common"  Margin="5" FontSize="18"/>
                                     <HyperlinkButton Content="WinUICommunity/SettingsUI" NavigateUri="https://github.com/WinUICommunity/SettingsUI"  Margin="5" FontSize="18"/>
+                                    <HyperlinkButton Content="NLog" NavigateUri="https://nlog-project.org/"  Margin="5" FontSize="18"/>
                                 </StackPanel>
                             </ScrollViewer>
                         </controls:SettingsCard.Description>
