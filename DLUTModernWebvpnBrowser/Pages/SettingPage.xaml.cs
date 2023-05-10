@@ -23,6 +23,7 @@ using DLUTModernWebvpnBrowser.Configurations;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Windows.AppNotifications.Builder;
 using Microsoft.Windows.AppNotifications;
+using NLog;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -34,10 +35,13 @@ namespace DLUTModernWebvpnBrowser.Pages
     /// </summary>
     public sealed partial class SettingPage : Page
     {
+        public NLog.Logger logger;
         private TabViewItem tabViewItem;
         private TabviewPage tabviewPage;
         public SettingPage()
         {
+            logger = NLog.LogManager.GetCurrentClassLogger();
+            logger.Info("打开设置页面");
             this.InitializeComponent();
         }
         public void PrepareConnectedAnimation(ConnectedAnimationConfiguration config)
@@ -93,8 +97,8 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
+            logger.Info("清除cookie");
             ContentDialog dialog = new ContentDialog();
-
             // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
             dialog.XamlRoot = this.XamlRoot;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -118,6 +122,11 @@ namespace DLUTModernWebvpnBrowser.Pages
                 };
                 webView2.EnsureCoreWebView2Async();
             }
+        }
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            logger.Info("打开日志文件夹");
+            Windows.System.Launcher.LaunchUriAsync(new Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\DLUTModernWebvpnBrowser\\Log"));
         }
     }
 }

@@ -33,6 +33,7 @@ namespace DLUTModernWebvpnBrowser.Pages
     /// </summary>
     public sealed partial class AboutPage : Page
     {
+        public NLog.Logger logger;
         public string Version = string.Format("版本：{0}.{1}.{2}.{3}",
                         Package.Current.Id.Version.Major,
                         Package.Current.Id.Version.Minor,
@@ -42,6 +43,8 @@ namespace DLUTModernWebvpnBrowser.Pages
         private TabviewPage tabviewPage;
         public AboutPage()
         {
+            logger = NLog.LogManager.GetCurrentClassLogger();
+            logger.Info("打开关于页面");
             this.InitializeComponent();
         }
         public void PrepareConnectedAnimation(ConnectedAnimationConfiguration config)

@@ -32,10 +32,13 @@ namespace DLUTModernWebvpnBrowser.Pages
     /// </summary>
     public sealed partial class CustomWebPage : Page
     {
+        public NLog.Logger logger;
         private TabViewItem tabViewItem;
         private TabviewPage tabviewPage;
         public CustomWebPage()
         {
+            logger = NLog.LogManager.GetCurrentClassLogger();
+            logger.Info("打开Webvpn自定义tab页面（无转换）");
             this.InitializeComponent();
         }
 
@@ -139,6 +142,14 @@ namespace DLUTModernWebvpnBrowser.Pages
             {
                 RefreshOrStopIcon.Glyph = "\xe72c";
                 tabViewItem.Header = WebView.CoreWebView2.DocumentTitle;
+            };
+            WebView.CoreWebView2.NavigationCompleted += (sender, args) =>
+            {
+                logger.Info("页面加载完成" + WebView.Source.AbsoluteUri);
+            };
+            WebView.CoreWebView2.NavigationStarting += (sender, args) =>
+            {
+                logger.Info("开始加载页面" + WebView.Source.AbsoluteUri);
             };
         }
 

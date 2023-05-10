@@ -21,6 +21,9 @@ using Windows.Foundation.Collections;
 using WinUICommunity;
 using DLUTModernWebvpnBrowser.Configurations;
 using DLUTModernWebvpnBrowser.Entities;
+using Microsoft.Windows.AppNotifications.Builder;
+using Microsoft.Windows.AppNotifications;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,6 +36,7 @@ namespace DLUTModernWebvpnBrowser
     public partial class App : Application
     {
         public static ThemeManager themeManager { get; private set; }
+        public NLog.Logger logger;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -50,7 +54,18 @@ namespace DLUTModernWebvpnBrowser
         {
             //WebvpnKey.Key = "Wxzxvpn2023key@$";
             //WebvpnKey.IV = "Wxzxvpn2023key@$";
+            logger = NLog.LogManager.GetCurrentClassLogger();
+            logger.Info("--------程序启动--------");
+            logger.Info("日志记录初始化成功");
             Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--proxy-server=\"direct://\"");
+            logger.Info("WebView参数初始化成功");
+            //Task线程内未捕获异常处理事件
+            System.Threading.Tasks.TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+            //非UI线程未捕获异常处理事件(例如自己创建的一个子线程)
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            //全局异常捕获
+            App.Current.UnhandledException += App_UnhandledException;
+            Application.Current.UnhandledException += App_UnhandledException;
             m_window = new MainWindow();
             ElementTheme SettingsTheme = ElementTheme.Default;
             if (ApplicationConfig.GetSettings("Theme") != null)
@@ -95,5 +110,61 @@ namespace DLUTModernWebvpnBrowser
         }
 
         private Window m_window;
+
+
+        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            // 处理未处理的异常
+            HandleException(e.Exception);
+            // 将事件标记为已处理，以防止应用程序崩溃
+            e.Handled = true;
+        }
+
+
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            try
+            {
+                if (e.Exception is Exception exception)
+                {
+                    HandleException(exception);
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+            finally
+            {
+                e.SetObserved();
+            }
+        }
+
+        //非UI线程未捕获异常处理事件(例如自己创建的一个子线程)
+        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                if (e.ExceptionObject is Exception exception)
+                {
+                    HandleException(exception);
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+        }
+
+        //日志记录
+        private void HandleException(Exception ex)
+        {
+            var builder = new AppNotificationBuilder()
+                .AddText(ex.Message + ex.StackTrace);
+            var notificationManager = AppNotificationManager.Default;
+            notificationManager.Show(builder.BuildNotification());
+            //记录日志
+            logger.Error(ex.ToString());
+        }
     }
 }

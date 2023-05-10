@@ -37,11 +37,14 @@ namespace DLUTModernWebvpnBrowser.Pages
     /// //e711
     public sealed partial class WebViewPage : Page
     {
+        public NLog.Logger logger;
         private TabViewItem tabViewItem;
         private TabviewPage tabviewPage;
         bool LoginTried = false;
         public WebViewPage()
         {
+            logger = NLog.LogManager.GetCurrentClassLogger();
+            logger.Info("打开Webvpn默认tab页面");
             this.InitializeComponent();
         }
 
@@ -91,15 +94,21 @@ namespace DLUTModernWebvpnBrowser.Pages
                 tabViewItem.Header = WebView.CoreWebView2.DocumentTitle;
             };
             WebView.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
+            WebView.CoreWebView2.NavigationStarting += (sender, args) =>
+            {
+                logger.Info("开始加载页面" + WebView.Source.AbsoluteUri);
+            };
         }
 
         private void CoreWebView2_NavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
         {
+            logger.Info("页面加载完成" + WebView.Source.AbsoluteUri);
             if (WebView.CoreWebView2.DocumentTitle.IndexOf("过期") != -1)
             {
                 WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
                 WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
                 WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
+                logger.Info("密码过期");
             }
             if (WebView.Source.AbsoluteUri == "https://webvpn.dlut.edu.cn/https/77726476706e69737468656265737421e3e44ed2233c7d44300d8db9d6562d/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri == "https://sso.dlut.edu.cn/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue"|| WebView.Source.AbsoluteUri.StartsWith("https://webvpn.dlut.edu.cn/https/77726476706e69737468656265737421e3e44ed2233c7d44300d8db9d6562d/cas/login;JSESSIONIDCAS="))
             {
@@ -170,13 +179,13 @@ namespace DLUTModernWebvpnBrowser.Pages
                                 Task<HttpResponseMessage> res2 = client.GetAsync("https://webvpn.dlut.edu.cn/user/info");
                                 HttpResponseMessage Response2 = res2.Result;
                                 String FinalResponse = Response2.Content.ReadAsStringAsync().Result;
-                                Debug.WriteLine(FinalResponse);
+                                logger.Info("Webvpn配置：\n" + FinalResponse);
                                 WebvpnKey.Key = FinalResponse.Split("\"wrdvpnKey\": \"")[1].Split("\"")[0];
                                 WebvpnKey.IV = FinalResponse.Split("\"wrdvpnIV\": \"")[1].Split("\"")[0];
                             }
                             catch (Exception ex)
                             {
-                                Debug.WriteLine(ex);
+                                logger.Info("配置信息错误" + ex.ToString());
                                 var builder = new AppNotificationBuilder()
                                     .AddText(ex.ToString());
                                 var notificationManager = AppNotificationManager.Default;
@@ -293,13 +302,13 @@ namespace DLUTModernWebvpnBrowser.Pages
                         Task<HttpResponseMessage> res2 = client.GetAsync("https://webvpn.dlut.edu.cn/user/info");
                         HttpResponseMessage Response2 = res2.Result;
                         String FinalResponse = Response2.Content.ReadAsStringAsync().Result;
-                        Debug.WriteLine(FinalResponse);
+                        logger.Info("Webvpn配置：\n" + FinalResponse);
                         WebvpnKey.Key = FinalResponse.Split("\"wrdvpnKey\": \"")[1].Split("\"")[0];
                         WebvpnKey.IV = FinalResponse.Split("\"wrdvpnIV\": \"")[1].Split("\"")[0];
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine(ex);
+                        logger.Info("配置信息错误" + ex.ToString());
                         var builder = new AppNotificationBuilder()
                             .AddText(ex.ToString());
                         var notificationManager = AppNotificationManager.Default;
@@ -334,6 +343,7 @@ namespace DLUTModernWebvpnBrowser.Pages
                 fold += ("/" + hosts[i]);
             }
             string final = "https://" + "webvpn.dlut.edu.cn" + '/' + pro + '/' + Convert.ToHexString(Encoding.ASCII.GetBytes(WebvpnKey.IV)) + cph + fold;
+            logger.Info("地址转换：\n原始地址：" + url + "\n转换地址：" + final);
             return final;
         }
 

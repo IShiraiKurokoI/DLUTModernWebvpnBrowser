@@ -61,5 +61,18 @@
                     Click="Button_Click"/>
             </controls:SettingsCard>
         </controls:SettingsGroup>
+        <controls:SettingsGroup Header="程序日志" Margin="4,-24,4,4">
+            <controls:SettingsCard
+                    Header="打开日志文件夹">
+                <controls:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xe8b7;"/>
+                </controls:SettingsCard.HeaderIcon>
+                <Button 
+                        HorizontalAlignment="Right"
+                        Content="打开文件夹"
+                        Width="100"
+                        Click="Button_Click_2"/>
+            </controls:SettingsCard>
+        </controls:SettingsGroup>
     </StackPanel>
 </Page>
