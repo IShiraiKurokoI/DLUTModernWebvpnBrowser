@@ -57,6 +57,7 @@ namespace DLUTModernWebvpnBrowser
             logger = NLog.LogManager.GetCurrentClassLogger();
             logger.Info("--------程序启动--------");
             logger.Info("日志记录初始化成功");
+            DeleteLog();
             Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--proxy-server=\"direct://\"");
             logger.Info("WebView参数初始化成功");
             //Task线程内未捕获异常处理事件
@@ -110,6 +111,38 @@ namespace DLUTModernWebvpnBrowser
         }
 
         private Window m_window;
+
+        public void DeleteLog()
+        {
+            try
+            {
+                string logDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\DLUTModernWebvpnBrowser\\Log";
+                string logFilePrefix = "Log-DLUTModernWebvpnBrowser-";
+                int daysThreshold = 3;
+                DateTime deletionDate = DateTime.Now.AddDays(-daysThreshold);
+                string[] logFiles = Directory.GetFiles(logDirectory, logFilePrefix + "*.log");
+
+                foreach (string logFile in logFiles)
+                {
+                    string fileName = System.IO.Path.GetFileName(logFile);
+                    string dateString = fileName.Substring(logFilePrefix.Length, 10);
+                    DateTime logDate;
+
+                    if (DateTime.TryParseExact(dateString, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out logDate))
+                    {
+                        if (logDate <= deletionDate)
+                        {
+                            File.Delete(logFile);
+                            logger.Info("删除过期日志: " + fileName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+            }
+        }
 
 
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
