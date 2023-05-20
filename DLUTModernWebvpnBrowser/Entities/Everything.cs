@@ -9,12 +9,12 @@ namespace DLUTModernWebvpnBrowser.Entities
 {
     public class Everything
     {
-        public TabviewPage _tabview;
+        public MainWindow _mainwindow;
         public TabViewItem _item;
         public string url;
-        public Everything(TabviewPage tabviewPage, TabViewItem tabViewItem,string url)
+        public Everything(MainWindow mainWindow, TabViewItem tabViewItem, string url)
         {
-            _tabview = tabviewPage;
+            _mainwindow = mainWindow;
             _item = tabViewItem;
             this.url = url;
         }

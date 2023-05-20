@@ -40,7 +40,7 @@ namespace DLUTModernWebvpnBrowser.Pages
                         Package.Current.Id.Version.Build,
                         Package.Current.Id.Version.Revision);
         private TabViewItem tabViewItem;
-        private TabviewPage tabviewPage;
+        private MainWindow mainWindow;
         public AboutPage()
         {
             logger = NLog.LogManager.GetCurrentClassLogger();
@@ -59,11 +59,10 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            TabViewAndItem tabViewAndItem = ((TabViewAndItem)e.Parameter);
-            tabViewItem = tabViewAndItem._item;
-            tabviewPage = tabViewAndItem._tabview;
+            Everything everything = ((Everything)e.Parameter);
+            tabViewItem = everything._item;
+            mainWindow = everything._mainwindow;
             base.OnNavigatedTo(e);
-
             var anim = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackwardConnectedAnimation");
             if (anim != null)
             {
@@ -85,17 +84,17 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         private void SettingsCard_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            tabviewPage.OpenCustom("项目地址", "https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser");
+            mainWindow.OpenCustom("项目地址", "https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser");
         }
 
         private void HyperlinkButton_Click_1(object sender, RoutedEventArgs e)
         {
-            tabviewPage.OpenCustom("Github主页", "https://github.com/IShiraiKurokoI");
+            mainWindow.OpenCustom("Github主页", "https://github.com/IShiraiKurokoI");
         }
 
         private void HyperlinkButton_Click_2(object sender, RoutedEventArgs e)
         {
-            tabviewPage.OpenCustom("BiliBili主页", "https://space.bilibili.com/310144483");
+            mainWindow.OpenCustom("BiliBili主页", "https://space.bilibili.com/310144483");
         }
     }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "DLUTModernWebvpnBrowser (Package)": {
       "commandName": "MsixPackage",
-      "nativeDebugging": true
+      "nativeDebugging": false
     },
     "DLUTModernWebvpnBrowser (Unpackaged)": {
       "commandName": "Project",

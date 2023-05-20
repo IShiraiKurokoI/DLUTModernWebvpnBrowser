@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and Contributors.
+Ôªø// Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
 using Microsoft.UI.Xaml;
@@ -21,6 +21,10 @@ using DLUTModernWebvpnBrowser.Helpers;
 using Microsoft.UI;
 using Windows.Graphics;
 using WinRT.Interop;
+using DLUTModernWebvpnBrowser.Entities;
+using DLUTModernWebvpnBrowser.Pages;
+using Windows.ApplicationModel.Core;
+using Windows.UI.ViewManagement;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -37,11 +41,111 @@ namespace DLUTModernWebvpnBrowser
         {
             this.InitializeComponent();
             m_AppWindow = this.AppWindow;
-            m_AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             m_AppWindow.Resize(new SizeInt32(1600, 900));
             m_AppWindow.SetIcon("Assets/logo.ico");
-            this.Title = "¥Û¡¨¿Ìπ§¥Û—ßWebVPN‰Ø¿¿∆˜";
-            SetTitleBar(AppTitleBar);
+            this.Title = "Â§ßËøûÁêÜÂ∑•Â§ßÂ≠¶WebVPNÊµèËßàÂô®";
+        }
+
+        private void Root_Loaded(object sender, RoutedEventArgs e)
+        {
+            Tabs.TabItemsChanged += Tabs_TabItemsChanged;
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(CustomDragRegion);
+            CustomDragRegion.MinWidth = 188;
+            SetupWindow();
+        }
+
+        private void Tabs_TabItemsChanged(TabView sender, Windows.Foundation.Collections.IVectorChangedEventArgs args)
+        {
+            // If there are no more tabs, close the window.
+            if (sender.TabItems.Count == 0)
+            {
+                this.Close();
+            }
+            // If there is only one tab left, disable dragging and reordering of Tabs.
+            else if (sender.TabItems.Count == 1)
+            {
+                sender.CanReorderTabs = false;
+                sender.CanDragTabs = false;
+            }
+            else
+            {
+                sender.CanReorderTabs = true;
+                sender.CanDragTabs = true;
+            }
+        }
+
+        public void AddNewTab()
+        {
+            var tab = CreateNewTab();
+            Tabs.TabItems.Add(tab);
+            Tabs.SelectedIndex = Tabs.TabItems.Count-1;
+        }
+
+        void SetupWindow()
+        {
+            AddNewTab();
+        }
+
+
+        public TabViewItem CreateNewTab()
+        {
+            TabViewItem newItem = new TabViewItem();
+            newItem.Header = "Êñ∞È°µÈù¢";
+            Frame frame = new Frame();
+            frame.Navigate(typeof(WebviewPage), new Everything(this, newItem,null));
+            newItem.Content = frame;
+            return newItem;
+        }
+
+        public void Tabs_AddTabButtonClick(TabView sender, object args)
+        {
+            AddNewTab();
+        }
+
+        private void Tabs_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
+        {
+            sender.TabItems.Remove(args.Tab);
+        }
+
+        public TabView GetTabView()
+        {
+            return Tabs;
+        }
+
+        public void OpenAbout()
+        {
+            TabViewItem newItem = new TabViewItem();
+            newItem.Header = "ÂÖ≥‰∫é";
+            newItem.IconSource = new Microsoft.UI.Xaml.Controls.FontIconSource() { Glyph = "\xe946" };
+            Frame frame = new Frame();
+            frame.Navigate(typeof(AboutPage), new Everything(this, newItem,null));
+            newItem.Content = frame;
+            Tabs.TabItems.Add(newItem);
+            Tabs.SelectedIndex = Tabs.TabItems.Count - 1;
+        }
+
+        public void OpenSetting()
+        {
+            TabViewItem newItem = new TabViewItem();
+            newItem.Header = "ËÆæÁΩÆ";
+            newItem.IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.Setting };
+            Frame frame = new Frame();
+            frame.Navigate(typeof(SettingPage), new Everything(this, newItem, null));
+            newItem.Content = frame;
+            Tabs.TabItems.Add(newItem);
+            Tabs.SelectedIndex = Tabs.TabItems.Count - 1;
+        }
+
+        public void OpenCustom(string name, string url)
+        {
+            TabViewItem newItem = new TabViewItem();
+            newItem.Header = name;
+            Frame frame = new Frame();
+            frame.Navigate(typeof(WebviewPage), new Everything(this, newItem, url));
+            newItem.Content = frame;
+            Tabs.TabItems.Add(newItem);
+            Tabs.SelectedIndex = Tabs.TabItems.Count - 1;
         }
     }
 }

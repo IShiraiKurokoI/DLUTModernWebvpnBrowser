@@ -96,6 +96,7 @@ namespace DLUTModernWebvpnBrowser
             Frame frame = new Frame();
             frame.Navigate(typeof(WebViewPage),new TabViewAndItem(this,newItem));
             newItem.Content = frame;
+            TabView.SelectedItem = newItem;
             return newItem;
         }
     }

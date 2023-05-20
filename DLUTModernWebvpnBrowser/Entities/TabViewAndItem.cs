@@ -9,9 +9,9 @@ namespace DLUTModernWebvpnBrowser.Entities
 {
     public class TabViewAndItem
     {
-        public TabviewPage _tabview;
+        public MainWindow _tabview;
         public TabViewItem _item;
-        public TabViewAndItem (TabviewPage tabviewPage,TabViewItem tabViewItem)
+        public TabViewAndItem (MainWindow tabviewPage,TabViewItem tabViewItem)
         {
             _tabview= tabviewPage;
             _item= tabViewItem;

@@ -34,7 +34,7 @@ namespace DLUTModernWebvpnBrowser.Pages
     {
         public NLog.Logger logger;
         private TabViewItem tabViewItem;
-        private TabviewPage tabviewPage;
+        private MainWindow mainwindow;
         public CustomWebPage()
         {
             logger = NLog.LogManager.GetCurrentClassLogger();
@@ -56,7 +56,7 @@ namespace DLUTModernWebvpnBrowser.Pages
         {
             Everything everything = ((Everything)e.Parameter);
             tabViewItem = everything._item;
-            tabviewPage = everything._tabview;
+            mainwindow = everything._mainwindow;
             WebView.Source = new Uri(everything.url);
             AddressBox.Text = everything.url;
             base.OnNavigatedTo(e);
@@ -69,28 +69,28 @@ namespace DLUTModernWebvpnBrowser.Pages
         }
         private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            tabviewPage.GetTabView().TabItems.Add(tabviewPage.CreateNewTab(tabviewPage.GetTabView().TabItems.Count));
-            tabviewPage.GetTabView().SelectedIndex = tabviewPage.GetTabView().TabItems.Count - 1;
+            mainwindow.GetTabView().TabItems.Add(mainwindow.CreateNewTab(mainwindow.GetTabView().TabItems.Count));
+            mainwindow.GetTabView().SelectedIndex = mainwindow.GetTabView().TabItems.Count - 1;
         }
 
         private void MenuFlyoutItem_Click_1(object sender, RoutedEventArgs e)
         {
-            tabviewPage.OpenSetting();
+            mainwindow.OpenSetting();
         }
 
         private void MenuFlyoutItem_Click_2(object sender, RoutedEventArgs e)
         {
-            tabviewPage.OpenAbout();
+            mainwindow.OpenAbout();
         }
 
         private void MenuFlyoutItem_Click_3(object sender, RoutedEventArgs e)
         {
-            tabviewPage.OpenCustom("反馈", "https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser/issues");
+            mainwindow.OpenCustom("反馈", "https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser/issues");
         }
 
         private void MenuFlyoutItem_Click_4(object sender, RoutedEventArgs e)
         {
-            tabviewPage.OpenCustom("下载", "edge://downloads/all");
+            mainwindow.OpenCustom("下载", "edge://downloads/all");
         }
 
         private void MenuFlyoutItem_Click_5(object sender, RoutedEventArgs e)
@@ -129,9 +129,9 @@ namespace DLUTModernWebvpnBrowser.Pages
             WebView.CoreWebView2.Settings.IsZoomControlEnabled = true;
             WebView.CoreWebView2.Settings.IsGeneralAutofillEnabled = true;
             WebView.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = true;
-            WebView.CoreWebView2.NewWindowRequested += (sender, args) =>
+            WebView.CoreWebView2.NewWindowRequested += async (sender, args) =>
             {
-                WebView.CoreWebView2.ExecuteScriptAsync("window.location.href='" + args.Uri.ToString() + "'");
+                await WebView.CoreWebView2.ExecuteScriptAsync("window.location.href='" + args.Uri.ToString() + "'");
                 args.Handled = true;
             };
             WebView.CoreWebView2.ContentLoading += (sender, args) =>
@@ -155,7 +155,7 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         private void MenuFlyoutItem_Click_6(object sender, RoutedEventArgs e)
         {
-            tabviewPage.OpenCustom("历史记录", "edge://history/all");
+            mainwindow.OpenCustom("历史记录", "edge://history/all");
         }
         private void GoForward_Click(object sender, RoutedEventArgs e)
         {

@@ -25,8 +25,12 @@
     <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Entities\MainWindowAndItem.cs" />
+    <Compile Remove="Entities\TabViewAndItem.cs" />
     <Compile Remove="Helpers\NativeMethods.cs" />
     <Compile Remove="Helpers\TitleBarHelper.cs" />
+    <Compile Remove="Pages\CustomWebPage.xaml.cs" />
+    <Compile Remove="TabviewPage.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Assets\BadgeLogo.scale-100.png" />
@@ -47,8 +51,12 @@
     <None Remove="Pages\AboutPage.xaml" />
     <None Remove="Pages\CustomWebPage.xaml" />
     <None Remove="Pages\SettingPage.xaml" />
-    <None Remove="Pages\WebViewPage.xaml" />
+    <None Remove="Pages\WebviewPage.xaml" />
     <None Remove="TabviewPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Pages\CustomWebPage.xaml" />
+    <Page Remove="TabviewPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,8 +76,8 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
     <PackageReference Include="NLog" Version="5.1.4" />
     <PackageReference Include="NLog.Schema" Version="5.1.4" />
-    <PackageReference Include="WinUICommunity.Common" Version="4.0.7" />
-    <PackageReference Include="WinUICommunity.SettingsUI" Version="4.0.5" />
+    <PackageReference Include="WinUICommunity.Common" Version="4.0.8" />
+    <PackageReference Include="WinUICommunity.SettingsUI" Version="4.0.6" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -95,7 +103,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Pages\CustomWebPage.xaml">
+    <Page Update="Pages\WebviewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -106,16 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\SettingPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="TabviewPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Pages\WebViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

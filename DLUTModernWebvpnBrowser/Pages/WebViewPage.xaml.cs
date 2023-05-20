@@ -1,29 +1,35 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
+using DLUTModernWebvpnBrowser.Configurations;
 using DLUTModernWebvpnBrowser.Entities;
+using DLUTModernWebvpnBrowser.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
-using System.Security.Cryptography;
-using System.Text;
-using System;
-using Windows.Foundation.Metadata;
-using Castle.Core.Configuration;
-using System.Threading.Tasks;
-using DLUTModernWebvpnBrowser.Configurations;
 using Microsoft.Windows.AppNotifications.Builder;
 using Microsoft.Windows.AppNotifications;
-using Castle.Core.Internal;
-using System.Diagnostics;
-using WinUICommunity;
-using Windows.ApplicationModel.DataTransfer;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net;
-using System.Threading;
-using DLUTModernWebvpnBrowser.Helpers;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
+using Windows.UI.WebUI;
 using DES = DLUTModernWebvpnBrowser.Helpers.DES;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -34,14 +40,13 @@ namespace DLUTModernWebvpnBrowser.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    /// //e711
-    public sealed partial class WebViewPage : Page
+    public sealed partial class WebviewPage : Page
     {
         public NLog.Logger logger;
         private TabViewItem tabViewItem;
-        private TabviewPage tabviewPage;
+        private MainWindow mainWindow;
         bool LoginTried = false;
-        public WebViewPage()
+        public WebviewPage()
         {
             logger = NLog.LogManager.GetCurrentClassLogger();
             logger.Info("打开Webvpn默认tab页面");
@@ -60,9 +65,16 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            TabViewAndItem tabViewAndItem= ((TabViewAndItem)e.Parameter);
-            tabViewItem = tabViewAndItem._item;
-            tabviewPage = tabViewAndItem._tabview;
+            if (e.Parameter != null)
+            {
+                Everything everything = ((Everything)e.Parameter);
+                tabViewItem = everything._item;
+                mainWindow = everything._mainwindow;
+                if(everything.url !=null)
+                {
+                    WebView.Source = new Uri(everything.url);
+                }
+            }
             base.OnNavigatedTo(e);
 
             var anim = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackwardConnectedAnimation");
@@ -110,9 +122,9 @@ namespace DLUTModernWebvpnBrowser.Pages
                 WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
                 logger.Info("密码过期");
             }
-            if (WebView.Source.AbsoluteUri == "https://webvpn.dlut.edu.cn/https/77726476706e69737468656265737421e3e44ed2233c7d44300d8db9d6562d/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri == "https://sso.dlut.edu.cn/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue"|| WebView.Source.AbsoluteUri.StartsWith("https://webvpn.dlut.edu.cn/https/77726476706e69737468656265737421e3e44ed2233c7d44300d8db9d6562d/cas/login;JSESSIONIDCAS="))
+            if (WebView.Source.AbsoluteUri == "https://webvpn.dlut.edu.cn/https/77726476706e69737468656265737421e3e44ed2233c7d44300d8db9d6562d/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri == "https://sso.dlut.edu.cn/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri.StartsWith("https://webvpn.dlut.edu.cn/https/77726476706e69737468656265737421e3e44ed2233c7d44300d8db9d6562d/cas/login;JSESSIONIDCAS="))
             {
-                if(LoginTried)
+                if (LoginTried)
                 {
                     Notify();
                 }
@@ -124,13 +136,13 @@ namespace DLUTModernWebvpnBrowser.Pages
             }
             else
             {
-                LoginTried= false;
+                LoginTried = false;
             }
         }
         async Task Notify()
         {
             var builder = new AppNotificationBuilder()
-                .AddText("⚠自动认证失败⚠")
+            .AddText("⚠自动认证失败⚠")
                 .AddText("请前往设置界面检查账号密码是否正确");
             var notificationManager = AppNotificationManager.Default;
             notificationManager.Show(builder.BuildNotification());
@@ -138,14 +150,14 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         async Task login()
         {
-            if(string.IsNullOrEmpty(ApplicationConfig.GetSettings("Uid")) || string.IsNullOrEmpty(ApplicationConfig.GetSettings("Password")))
+            if (string.IsNullOrEmpty(ApplicationConfig.GetSettings("Uid")) || string.IsNullOrEmpty(ApplicationConfig.GetSettings("Password")))
             {
                 var builder = new AppNotificationBuilder()
                     .AddText("⚠请先配置账号密码⚠")
                     .AddText("配置完成后刷新原始页面即可自动登录");
                 var notificationManager = AppNotificationManager.Default;
                 notificationManager.Show(builder.BuildNotification());
-                tabviewPage.OpenSetting();
+                mainWindow.OpenSetting();
             }
             else
             {
@@ -209,17 +221,12 @@ namespace DLUTModernWebvpnBrowser.Pages
             }
         }
 
-        private void GoBack_Click(object sender, RoutedEventArgs e)
-        {
-            WebView.GoBack();
-        }
-
         private void RefreshOrStop_Click(object sender, RoutedEventArgs e)
         {
-            if(WebView.IsLoaded)
+            if (WebView.IsLoaded)
             {
                 WebView.CoreWebView2.Reload();
-                LoginTried=false;
+                LoginTried = false;
             }
             else
             {
@@ -229,9 +236,9 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         private void AddressBox_KeyUp(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            if(e.Key == Windows.System.VirtualKey.Enter)
+            if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                if(!AddressBox.Text.Contains("webvpn.dlut.edu.cn"))
+                if (!AddressBox.Text.Contains("webvpn.dlut.edu.cn"))
                 {
                     WebView.CoreWebView2.ExecuteScriptAsync("window.location.href='" + getvpnurl(AddressBox.Text) + "'");
                 }
@@ -347,37 +354,33 @@ namespace DLUTModernWebvpnBrowser.Pages
             return final;
         }
 
-        private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private void GoBack_Click(object sender, RoutedEventArgs e)
         {
-            tabviewPage.GetTabView().TabItems.Add(tabviewPage.CreateNewTab(tabviewPage.GetTabView().TabItems.Count));
-            tabviewPage.GetTabView().SelectedIndex = tabviewPage.GetTabView().TabItems.Count - 1;
+            WebView.GoBack();
+        }
+        private void GoForward_Click(object sender, RoutedEventArgs e)
+        {
+            WebView.GoForward();
         }
 
-        private void MenuFlyoutItem_Click_1(object sender, RoutedEventArgs e)
+        private void NewTab_Click(object sender, RoutedEventArgs e)
         {
-            tabviewPage.OpenSetting();
+            mainWindow.AddNewTab();
+        }
+        private void Download_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.OpenCustom("下载", "edge://downloads/all");
+        }
+        private void History_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.OpenCustom("历史记录", "edge://history/all");
         }
 
-        private void MenuFlyoutItem_Click_2(object sender, RoutedEventArgs e)
-        {
-            tabviewPage.OpenAbout();
-        }
-
-        private void MenuFlyoutItem_Click_3(object sender, RoutedEventArgs e)
-        {
-            tabviewPage.OpenCustom("反馈", "https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser/issues");
-        }
-
-        private void MenuFlyoutItem_Click_4(object sender, RoutedEventArgs e)
-        {
-            tabviewPage.OpenCustom("下载", "edge://downloads/all");
-        }
-
-        private void MenuFlyoutItem_Click_5(object sender, RoutedEventArgs e)
+        private void Share_Click(object sender, RoutedEventArgs e)
         {
             DataPackage dataPackage = new DataPackage();
             dataPackage.RequestedOperation = DataPackageOperation.Copy;
-            dataPackage.SetText("【"+WebView.CoreWebView2.DocumentTitle+"】"+WebView.Source.AbsoluteUri);
+            dataPackage.SetText("【" + WebView.CoreWebView2.DocumentTitle + "】" + WebView.Source.AbsoluteUri);
             Clipboard.SetContent(dataPackage);
             var builder = new AppNotificationBuilder()
                 .AddText("页面链接已复制到剪贴板");
@@ -385,14 +388,19 @@ namespace DLUTModernWebvpnBrowser.Pages
             notificationManager.Show(builder.BuildNotification());
         }
 
-        private void MenuFlyoutItem_Click_6(object sender, RoutedEventArgs e)
+        private void Setting_Click(object sender, RoutedEventArgs e)
         {
-            tabviewPage.OpenCustom("历史记录", "edge://history/all");
+            mainWindow.OpenSetting();
         }
 
-        private void GoForward_Click(object sender, RoutedEventArgs e)
+        private void About_Click(object sender, RoutedEventArgs e)
         {
-            WebView.GoForward();
+            mainWindow.OpenAbout();
+        }
+
+        private void Feedback_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.OpenCustom("反馈", "https://github.com/IShiraiKurokoI/DLUTModernWebvpnBrowser/issues");
         }
     }
 }

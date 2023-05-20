@@ -37,13 +37,14 @@ namespace DLUTModernWebvpnBrowser.Pages
     {
         public NLog.Logger logger;
         private TabViewItem tabViewItem;
-        private TabviewPage tabviewPage;
+        private MainWindow mainWindow;
         public SettingPage()
         {
             logger = NLog.LogManager.GetCurrentClassLogger();
             logger.Info("打开设置页面");
             this.InitializeComponent();
         }
+
         public void PrepareConnectedAnimation(ConnectedAnimationConfiguration config)
         {
             var anim = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", SourceElement);
@@ -56,9 +57,9 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            TabViewAndItem tabViewAndItem = ((TabViewAndItem)e.Parameter);
-            tabViewItem = tabViewAndItem._item;
-            tabviewPage = tabViewAndItem._tabview;
+            Everything everything = ((Everything)e.Parameter);
+            tabViewItem = everything._item;
+            mainWindow = everything._mainwindow;
             base.OnNavigatedTo(e);
 
             var anim = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackwardConnectedAnimation");
@@ -80,9 +81,9 @@ namespace DLUTModernWebvpnBrowser.Pages
             ApplicationConfig.SaveSettings("Theme", ((ComboBoxItem)ThemePanel.SelectedItem).Tag.ToString());
             App.themeManager.OnThemeComboBoxSelectionChanged(sender);
         }
-        private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
+        private async void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:colors"));
+            await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:colors"));
         }
 
         private void Uid_TextChanged(object sender, TextChangedEventArgs e)
@@ -119,14 +120,16 @@ namespace DLUTModernWebvpnBrowser.Pages
                         .AddText("清除成功！");
                     var notificationManager = AppNotificationManager.Default;
                     notificationManager.Show(builder.BuildNotification());
+                    webView2.CoreWebView2.Stop();
+                    webView2.Close();
                 };
-                webView2.EnsureCoreWebView2Async();
+                await webView2.EnsureCoreWebView2Async();
             }
         }
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private async void Button_Click_2(object sender, RoutedEventArgs e)
         {
             logger.Info("打开日志文件夹");
-            Windows.System.Launcher.LaunchUriAsync(new Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\DLUTModernWebvpnBrowser\\Log"));
+            await Windows.System.Launcher.LaunchUriAsync(new Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\DLUTModernWebvpnBrowser\\Log"));
         }
     }
 }

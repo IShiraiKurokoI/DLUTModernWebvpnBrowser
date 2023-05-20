@@ -89,7 +89,7 @@ namespace DLUTModernWebvpnBrowser
                 ElementTheme = SettingsTheme,
                 TitleBarCustomization = new TitleBarCustomization
                 {
-                    TitleBarType = TitleBarType.AppWindow
+                    TitleBarType = TitleBarType.Window
                 }
             });
             var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(m_window);
