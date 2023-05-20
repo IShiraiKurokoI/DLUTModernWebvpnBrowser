@@ -91,11 +91,17 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         private void WebView_CoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)
         {
-            WebView.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = true;
             WebView.CoreWebView2.Settings.IsPasswordAutosaveEnabled = true;
             WebView.CoreWebView2.Settings.IsZoomControlEnabled = true;
             WebView.CoreWebView2.Settings.IsGeneralAutofillEnabled = true;
             WebView.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = true;
+            WebView.CoreWebView2.Settings.IsSwipeNavigationEnabled = true;
+            WebView.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = true;
+            WebView.CoreWebView2.Settings.IsPasswordAutosaveEnabled = true;
+            WebView.CoreWebView2.Settings.IsScriptEnabled = true;
+            WebView.CoreWebView2.Settings.IsWebMessageEnabled = true;
+            WebView.CoreWebView2.Settings.IsStatusBarEnabled = true;
+            WebView.CoreWebView2.Settings.AreDefaultScriptDialogsEnabled = true;
             WebView.CoreWebView2.NewWindowRequested += (sender, args) =>
             {
                 mainWindow.OpenCustom("正在加载", args.Uri);
