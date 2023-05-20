@@ -31,6 +31,7 @@ using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.UI.WebUI;
 using DES = DLUTModernWebvpnBrowser.Helpers.DES;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -56,7 +57,6 @@ namespace DLUTModernWebvpnBrowser.Pages
         public void PrepareConnectedAnimation(ConnectedAnimationConfiguration config)
         {
             var anim = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ForwardConnectedAnimation", SourceElement);
-
             if (config != null && ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7))
             {
                 anim.Configuration = config;
@@ -74,6 +74,11 @@ namespace DLUTModernWebvpnBrowser.Pages
                 {
                     WebView.Source = new Uri(everything.url);
                 }
+                tabViewItem.CloseRequested += (sender, args) =>
+                {
+                    WebView.CoreWebView2.Stop();
+                    WebView.Close();
+                };
             }
             base.OnNavigatedTo(e);
 
@@ -93,7 +98,7 @@ namespace DLUTModernWebvpnBrowser.Pages
             WebView.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = true;
             WebView.CoreWebView2.NewWindowRequested += (sender, args) =>
             {
-                WebView.CoreWebView2.ExecuteScriptAsync("window.location.href='" + args.Uri.ToString() + "'");
+                mainWindow.OpenCustom("正在加载", args.Uri);
                 args.Handled = true;
             };
             WebView.CoreWebView2.ContentLoading += (sender, args) =>
@@ -104,6 +109,15 @@ namespace DLUTModernWebvpnBrowser.Pages
             {
                 RefreshOrStopIcon.Glyph = "\xe72c";
                 tabViewItem.Header = WebView.CoreWebView2.DocumentTitle;
+                tabViewItem.IconSource = IconHelper.ConvFavURLToIconSource(sender.FaviconUri);
+            };
+            WebView.CoreWebView2.DocumentTitleChanged += (sender, args) =>
+            {
+                tabViewItem.Header = WebView.CoreWebView2.DocumentTitle;
+            };
+            WebView.CoreWebView2.FaviconChanged += (sender, args) =>
+            {
+                tabViewItem.IconSource = IconHelper.ConvFavURLToIconSource(sender.FaviconUri);
             };
             WebView.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
             WebView.CoreWebView2.NavigationStarting += (sender, args) =>
@@ -112,26 +126,26 @@ namespace DLUTModernWebvpnBrowser.Pages
             };
         }
 
-        private void CoreWebView2_NavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+        private async void CoreWebView2_NavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
         {
             logger.Info("页面加载完成" + WebView.Source.AbsoluteUri);
             if (WebView.CoreWebView2.DocumentTitle.IndexOf("过期") != -1)
             {
-                WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
-                WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
-                WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
+                await WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
+                await WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
+                await WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
                 logger.Info("密码过期");
             }
             if (WebView.Source.AbsoluteUri == "https://webvpn.dlut.edu.cn/https/77726476706e69737468656265737421e3e44ed2233c7d44300d8db9d6562d/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri == "https://sso.dlut.edu.cn/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri.StartsWith("https://webvpn.dlut.edu.cn/https/77726476706e69737468656265737421e3e44ed2233c7d44300d8db9d6562d/cas/login;JSESSIONIDCAS="))
             {
                 if (LoginTried)
                 {
-                    Notify();
+                    await Notify();
                 }
                 else
                 {
                     LoginTried = true;
-                    login();
+                    await login();
                 }
             }
             else
