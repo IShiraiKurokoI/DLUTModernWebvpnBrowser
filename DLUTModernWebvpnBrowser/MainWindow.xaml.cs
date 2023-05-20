@@ -25,6 +25,7 @@ using DLUTModernWebvpnBrowser.Entities;
 using DLUTModernWebvpnBrowser.Pages;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
+using System.Runtime.InteropServices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,12 +37,16 @@ namespace DLUTModernWebvpnBrowser
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+
+        [DllImport("user32.dll")]
+        static extern int GetDpiForWindow(IntPtr hwnd);
         private AppWindow m_AppWindow;
         public MainWindow()
         {
             this.InitializeComponent();
+            int dpi = GetDpiForWindow(WindowHelper.GetWindowHandleForCurrentWindow(this));
             m_AppWindow = this.AppWindow;
-            m_AppWindow.Resize(new SizeInt32(1600, 900));
+            m_AppWindow.Resize(new SizeInt32((int)(1570 * (double)((double)dpi / (double)120)), (int)(800 * (double)((double)dpi / (double)120))));
             m_AppWindow.SetIcon("Assets/logo.ico");
             this.Title = "大连理工大学WebVPN浏览器";
         }
