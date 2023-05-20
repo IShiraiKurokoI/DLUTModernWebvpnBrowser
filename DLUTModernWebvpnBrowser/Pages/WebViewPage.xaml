@@ -11,7 +11,7 @@
     mc:Ignorable="d">
     <Grid ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  x:Name="SourceElement">
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="36"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid Height="48" Grid.Row="0" Margin="4,-8,4,-8">
@@ -21,6 +21,8 @@
                 <ColumnDefinition Width="32"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="32"/>
+                <ColumnDefinition Width="32"/>
+                <ColumnDefinition Width="8"/>
             </Grid.ColumnDefinitions>
             <AppBarButton Height="48" Width="32" Grid.Column="0" Margin="4,0,0,0" x:Name="GoBack" Click="GoBack_Click" IsEnabled="{x:Bind WebView.CanGoBack,Mode=TwoWay}">
                 <AppBarButton.Icon>
@@ -38,7 +40,12 @@
                 </AppBarButton.Icon>
             </AppBarButton>
             <TextBox HorizontalAlignment="Stretch" Height="26" Grid.Column="3" Margin="8,0,0,0" x:Name="AddressBox" Text="{x:Bind WebView.Source.AbsoluteUri,Mode=OneWay}" KeyUp="AddressBox_KeyUp" InputScope="Url"/>
-            <AppBarButton  Height="48" Width="32" Grid.Column="4" Margin="4,0,0,0" x:Name="More">
+            <AppBarButton  Height="48" Width="32" Grid.Column="4" Margin="4,0,0,0" x:Name="Download" Click="DownloadButton_Click">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xe896;"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton  Height="48" Width="32" Grid.Column="5" Margin="4,0,0,0" x:Name="More">
                 <AppBarButton.Icon>
                     <FontIcon  Glyph="&#xe712;"/>
                 </AppBarButton.Icon>
@@ -46,7 +53,7 @@
                     <x:Double x:Key="AppBarButtonSubItemChevronFontSize">0.00001</x:Double>
                 </AppBarButton.Resources>
                 <AppBarButton.Flyout>
-                    <MenuFlyout>
+                    <MenuFlyout ShouldConstrainToRootBounds="True">
                         <MenuFlyoutItem Text="打开新标签页" Click="NewTab_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xe78b;"/>
@@ -79,6 +86,15 @@
                             </MenuFlyoutItem.Icon>
                             <MenuFlyoutItem.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem Text="开发者工具" x:Name="DevTools" Click="DevTools_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xec7a;"/>
+                            </MenuFlyoutItem.Icon>
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="I" Modifiers="Control"/>
                             </MenuFlyoutItem.KeyboardAccelerators>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>

@@ -32,6 +32,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI.WebUI;
 using DES = DLUTModernWebvpnBrowser.Helpers.DES;
 using Windows.System;
+using Windows.Web.UI.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -383,6 +384,17 @@ namespace DLUTModernWebvpnBrowser.Pages
             WebView.GoForward();
         }
 
+        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(WebView.CoreWebView2.IsDefaultDownloadDialogOpen)
+            {
+                WebView.CoreWebView2.CloseDefaultDownloadDialog();
+            }else
+            {
+                WebView.CoreWebView2.OpenDefaultDownloadDialog();
+            }
+        }
+
         private void NewTab_Click(object sender, RoutedEventArgs e)
         {
             mainWindow.AddNewTab();
@@ -406,6 +418,11 @@ namespace DLUTModernWebvpnBrowser.Pages
                 .AddText("页面链接已复制到剪贴板");
             var notificationManager = AppNotificationManager.Default;
             notificationManager.Show(builder.BuildNotification());
+        }
+
+        private void DevTools_Click(object sender, RoutedEventArgs e)
+        {
+            WebView.CoreWebView2.OpenDevToolsWindow();
         }
 
         private void Setting_Click(object sender, RoutedEventArgs e)
