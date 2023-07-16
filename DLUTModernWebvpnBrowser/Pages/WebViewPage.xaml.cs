@@ -33,6 +33,7 @@ using Windows.UI.WebUI;
 using DES = DLUTModernWebvpnBrowser.Helpers.DES;
 using Windows.System;
 using Windows.Web.UI.Interop;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -73,6 +74,7 @@ namespace DLUTModernWebvpnBrowser.Pages
                 mainWindow = everything._mainwindow;
                 if(everything.url !=null)
                 {
+                    AddressBox.Text = everything.url;
                     WebView.Source = new Uri(everything.url);
                 }
                 tabViewItem.CloseRequested += (sender, args) =>
@@ -141,13 +143,35 @@ namespace DLUTModernWebvpnBrowser.Pages
                 await WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
                 await WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
                 await WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
-                logger.Info("密码过期");
+                logger.Info("密码即将过期");
+                return;
             }
-            if (WebView.Source.AbsoluteUri == "https://webvpn.dlut.edu.cn/https/77726476706e69737468656265737421e3e44ed2233c7d44300d8db9d6562d/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri == "https://sso.dlut.edu.cn/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri.StartsWith("https://webvpn.dlut.edu.cn/https/77726476706e69737468656265737421e3e44ed2233c7d44300d8db9d6562d/cas/login;JSESSIONIDCAS="))
+            if (WebView.CoreWebView2.DocumentTitle.IndexOf("密码重置") != -1)
+            {
+                await WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
+                await WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
+                await WebView.ExecuteScriptAsync("document.getElementsByClassName('layui-layer-btn0')[0].click()");
+                logger.Info("密码已经过期");
+                string jscode = "new_pwd.value='" + ApplicationConfig.GetSettings("Password") + "'";
+                await WebView.CoreWebView2.ExecuteScriptAsync(jscode);
+                jscode = "confirm_pwd.value='" + ApplicationConfig.GetSettings("Password") + "'";
+                await WebView.CoreWebView2.ExecuteScriptAsync(jscode);
+                jscode = "sub_btn.click()";
+                await WebView.CoreWebView2.ExecuteScriptAsync(jscode);
+                return;
+            }
+            if (WebView.Source.AbsoluteUri == "https://webvpn.dlut.edu.cn/https/57787a7876706e323032336b657940246b0b0d56f80f865ae449fe2ddfb88b/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri == "https://sso.dlut.edu.cn/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri.StartsWith("https://webvpn.dlut.edu.cn/https/57787a7876706e323032336b657940246b0b0d56f80f865ae449fe2ddfb88b/cas/login;JSESSIONIDCAS="))
             {
                 if (LoginTried)
                 {
-                    await Notify();
+                    if(WebView.CoreWebView2.DocumentTitle.IndexOf("密码重置") == -1)
+                    {
+                        await Notify();
+                    }
+                    else
+                    {
+                        LoginTried = false;
+                    }
                 }
                 else
                 {
@@ -182,6 +206,14 @@ namespace DLUTModernWebvpnBrowser.Pages
             }
             else
             {
+                string jscode = "un.value='" + ApplicationConfig.GetSettings("Uid") + "'";
+                string jscode1 = "pd.value='" + ApplicationConfig.GetSettings("Password") + "'";
+                string rm = "rememberName.checked='checked'";
+                await WebView.CoreWebView2.ExecuteScriptAsync(rm);
+                await WebView.CoreWebView2.ExecuteScriptAsync(jscode);
+                await WebView.CoreWebView2.ExecuteScriptAsync(jscode1);
+                string jscode2 = "login()";
+                await WebView.CoreWebView2.ExecuteScriptAsync(jscode2);
                 Task.Run(() =>
                 {
                     if (WebvpnKey.Key == null)
@@ -212,9 +244,16 @@ namespace DLUTModernWebvpnBrowser.Pages
                                 Task<HttpResponseMessage> res2 = client.GetAsync("https://webvpn.dlut.edu.cn/user/info");
                                 HttpResponseMessage Response2 = res2.Result;
                                 String FinalResponse = Response2.Content.ReadAsStringAsync().Result;
-                                logger.Info("Webvpn配置：\n" + FinalResponse);
-                                WebvpnKey.Key = FinalResponse.Split("\"wrdvpnKey\": \"")[1].Split("\"")[0];
-                                WebvpnKey.IV = FinalResponse.Split("\"wrdvpnIV\": \"")[1].Split("\"")[0];
+                                if (FinalResponse .Contains("<title>大连理工大学WebVPN系统</title>"))
+                                {
+                                    logger.Info("需要密码重置，等待另一段代码处理");
+                                }
+                                else
+                                {
+                                    logger.Info("Webvpn配置：\n" + FinalResponse);
+                                    WebvpnKey.Key = FinalResponse.Split("\"wrdvpnKey\": \"")[1].Split("\"")[0];
+                                    WebvpnKey.IV = FinalResponse.Split("\"wrdvpnIV\": \"")[1].Split("\"")[0];
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -231,14 +270,6 @@ namespace DLUTModernWebvpnBrowser.Pages
                         }
                     }
                 });
-                string jscode = "un.value='" + ApplicationConfig.GetSettings("Uid") + "'";
-                string jscode1 = "pd.value='" + ApplicationConfig.GetSettings("Password") + "'";
-                string rm = "rememberName.checked='checked'";
-                await WebView.CoreWebView2.ExecuteScriptAsync(rm);
-                await WebView.CoreWebView2.ExecuteScriptAsync(jscode);
-                await WebView.CoreWebView2.ExecuteScriptAsync(jscode1);
-                string jscode2 = "login()";
-                await WebView.CoreWebView2.ExecuteScriptAsync(jscode2);
             }
         }
 
