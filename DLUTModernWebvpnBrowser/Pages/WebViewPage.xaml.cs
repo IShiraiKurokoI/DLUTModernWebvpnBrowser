@@ -292,7 +292,19 @@ namespace DLUTModernWebvpnBrowser.Pages
             {
                 if (!AddressBox.Text.Contains("webvpn.dlut.edu.cn"))
                 {
-                    WebView.CoreWebView2.ExecuteScriptAsync("window.location.href='" + getvpnurl(AddressBox.Text) + "'");
+                    string url = getvpnurl(AddressBox.Text);
+                    WebView.CoreWebView2.ExecuteScriptAsync("window.location.href='" + url + "'");
+                    AddressBox.Text = url;
+                }
+                else
+                {
+                    string url = AddressBox.Text;
+                    if (!AddressBox.Text.StartsWith("http"))
+                    {
+                        url = "http://" + url;
+                    }
+                    WebView.CoreWebView2.ExecuteScriptAsync("window.location.href='" + url + "'");
+                    AddressBox.Text = url;
                 }
             }
         }
@@ -382,6 +394,7 @@ namespace DLUTModernWebvpnBrowser.Pages
             string[] parts = url.Split(new[] { "://" }, StringSplitOptions.None);
             string pro = "http";
             string add = "";
+
             if (parts.Length == 1)
             {
                 add = parts[0];
@@ -394,16 +407,36 @@ namespace DLUTModernWebvpnBrowser.Pages
                 }
                 add = parts[1];
             }
+
             string[] hosts = add.Split(new[] { "/" }, StringSplitOptions.None);
-            string cph = getCiphertext(hosts[0]);
+            string cph;
+            if (hosts[0].Contains(":"))
+            {
+                cph = getCiphertext(hosts[0].Split(":")[0]);
+                pro += "-";
+                pro += hosts[0].Split(":")[1];
+            }
+            else
+            {
+                cph = getCiphertext(hosts[0]);
+            }
             string fold = "/";
+
             for (int i = 1; i < hosts.Length; i++)
             {
-                fold += ("/" + hosts[i]);
+                if(i == 1)
+                {
+                    fold += (hosts[i]);
+                }
+                else
+                {
+                    fold += ("/" + hosts[i]);
+                }
             }
-            string final = "https://" + "webvpn.dlut.edu.cn" + '/' + pro + '/' + Convert.ToHexString(Encoding.ASCII.GetBytes(WebvpnKey.IV)) + cph + fold;
-            logger.Info("地址转换：\n原始地址：" + url + "\n转换地址：" + final);
-            return final;
+
+            string webvpnBaseUrl = "https://webvpn.dlut.edu.cn";
+            string webvpnKeyIVHex = BitConverter.ToString(Encoding.ASCII.GetBytes(WebvpnKey.IV)).Replace("-", "");
+            return $"{webvpnBaseUrl}/{pro}/{webvpnKeyIVHex}{cph}{fold}";
         }
 
         private void GoBack_Click(object sender, RoutedEventArgs e)
