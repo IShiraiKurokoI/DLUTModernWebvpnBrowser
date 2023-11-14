@@ -160,7 +160,10 @@ namespace DLUTModernWebvpnBrowser.Pages
                 await WebView.CoreWebView2.ExecuteScriptAsync(jscode);
                 return;
             }
-            if (WebView.Source.AbsoluteUri == "https://webvpn.dlut.edu.cn/https/57787a7876706e323032336b657940246b0b0d56f80f865ae449fe2ddfb88b/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri == "https://sso.dlut.edu.cn/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" || WebView.Source.AbsoluteUri.StartsWith("https://webvpn.dlut.edu.cn/https/57787a7876706e323032336b657940246b0b0d56f80f865ae449fe2ddfb88b/cas/login;JSESSIONIDCAS="))
+            if (WebView.Source.AbsoluteUri == "https://webvpn.dlut.edu.cn/https/57787a7876706e323032336b657940246b0b0d56f80f865ae449fe2ddfb88b/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" 
+                || WebView.Source.AbsoluteUri == "https://sso.dlut.edu.cn/cas/login?service=https%3A%2F%2Fwebvpn.dlut.edu.cn%2Flogin%3Fcas_login%3Dtrue" 
+                || WebView.Source.AbsoluteUri.StartsWith("https://webvpn.dlut.edu.cn/https/57787a7876706e323032336b657940246b0b0d56f80f865ae449fe2ddfb88b/cas/login;JSESSIONIDCAS=") 
+                || WebView.Source.AbsoluteUri.Contains("/cas/login?"))
             {
                 if (LoginTried)
                 {
