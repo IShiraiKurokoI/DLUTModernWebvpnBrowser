@@ -44,7 +44,7 @@ namespace DLUTModernWebvpnBrowser
         public MainWindow()
         {
             this.InitializeComponent();
-            int dpi = GetDpiForWindow(WindowHelper.GetWindowHandleForCurrentWindow(this));
+            int dpi = GetDpiForWindow(WinRT.Interop.WindowNative.GetWindowHandle(this));
             m_AppWindow = this.AppWindow;
             m_AppWindow.Resize(new SizeInt32((int)(1570 * (double)((double)dpi / (double)120)), (int)(800 * (double)((double)dpi / (double)120))));
             m_AppWindow.SetIcon("Assets/logo.ico");

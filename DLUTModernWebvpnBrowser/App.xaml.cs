@@ -24,6 +24,7 @@ using DLUTModernWebvpnBrowser.Entities;
 using Microsoft.Windows.AppNotifications.Builder;
 using Microsoft.Windows.AppNotifications;
 using System.Threading.Tasks;
+using Microsoft.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,7 +36,7 @@ namespace DLUTModernWebvpnBrowser
     /// </summary>
     public partial class App : Application
     {
-        public static ThemeManager themeManager { get; private set; }
+        public static IThemeService themeService { get; private set; }
         public NLog.Logger logger;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -85,13 +86,21 @@ namespace DLUTModernWebvpnBrowser
             {
                 ApplicationConfig.SaveSettings("Theme", "Default");
             }
-            themeManager = ThemeManager.Initialize(m_window, new ThemeOptions
+
+            themeService = new ThemeService();
+            themeService.Initialize(m_window);
+            themeService.ConfigBackdrop(BackdropType.AcrylicThin);
+            themeService.ConfigElementTheme(SettingsTheme);
+            themeService.ConfigTitleBar(new TitleBarCustomization
             {
-                BackdropType = BackdropType.DesktopAcrylic,
-                ElementTheme = SettingsTheme,
-                TitleBarCustomization = new TitleBarCustomization
+                TitleBarWindowType = TitleBarWindowType.AppWindow,
+                LightTitleBarButtons = new TitleBarButtons
                 {
-                    TitleBarType = TitleBarType.Window
+                    ButtonBackgroundColor = Colors.Transparent
+                },
+                DarkTitleBarButtons = new TitleBarButtons
+                {
+                    ButtonBackgroundColor = Colors.Transparent
                 }
             });
             var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(m_window);

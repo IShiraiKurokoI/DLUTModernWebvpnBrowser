@@ -71,7 +71,8 @@ namespace DLUTModernWebvpnBrowser.Pages
 
         private void SourceElement_Loaded(object sender, RoutedEventArgs e)
         {
-            App.themeManager.SetThemeComboBoxDefaultItem(ThemePanel);
+            App.themeService.SetThemeComboBoxDefaultItem(ThemePanel);
+            App.themeService.SetBackdropComboBoxDefaultItem(Backdrop);
             Uid.Text = ApplicationConfig.GetSettings("Uid");
             Password.Password = ApplicationConfig.GetSettings("Password");
         }
@@ -79,7 +80,12 @@ namespace DLUTModernWebvpnBrowser.Pages
         private void ThemePanel_SelectionChanged(object sender, RoutedEventArgs e)
         {
             ApplicationConfig.SaveSettings("Theme", ((ComboBoxItem)ThemePanel.SelectedItem).Tag.ToString());
-            App.themeManager.OnThemeComboBoxSelectionChanged(sender);
+            App.themeService.OnThemeComboBoxSelectionChanged(sender);
+        }
+
+        private void Backdrop_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            App.themeService.OnBackdropComboBoxSelectionChanged(sender);
         }
         private async void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
